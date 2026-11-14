@@ -97,17 +97,81 @@ const clubs = [
 ];
 
 const realPlayers = [
+  // === MANCHESTER CITY ===
   { id: "haaland", name: "Erling Haaland", age: 24, position: "CF", clubId: "mci", country: "Norwegia", ovr: 91, potential: 94, marketValue: 200, wage: 470000 },
+  { id: "kdb", name: "Kevin De Bruyne", age: 33, position: "CM", clubId: "mci", country: "Belgia", ovr: 89, potential: 89, marketValue: 45, wage: 400000 },
+  { id: "rodri", name: "Rodri", age: 28, position: "CDM", clubId: "mci", country: "Spanyol", ovr: 91, potential: 92, marketValue: 130, wage: 250000 },
+  { id: "foden", name: "Phil Foden", age: 24, position: "CAM", clubId: "mci", country: "Inggris", ovr: 88, potential: 92, marketValue: 150, wage: 200000 },
+  { id: "dias", name: "Rúben Dias", age: 27, position: "CB", clubId: "mci", country: "Portugal", ovr: 89, potential: 90, marketValue: 80, wage: 220000 },
+  { id: "ederson", name: "Ederson", age: 31, position: "GK", clubId: "mci", country: "Brasil", ovr: 87, potential: 88, marketValue: 35, wage: 180000 },
+  { id: "bernardo", name: "Bernardo Silva", age: 30, position: "CAM", clubId: "mci", country: "Portugal", ovr: 87, potential: 87, marketValue: 70, wage: 250000 },
+  { id: "gvardiol", name: "Joško Gvardiol", age: 22, position: "LB", clubId: "mci", country: "Kroasia", ovr: 83, potential: 89, marketValue: 70, wage: 130000 },
+  { id: "walker", name: "Kyle Walker", age: 34, position: "RB", clubId: "mci", country: "Inggris", ovr: 83, potential: 83, marketValue: 15, wage: 180000 },
+  { id: "stones", name: "John Stones", age: 30, position: "CB", clubId: "mci", country: "Inggris", ovr: 85, potential: 86, marketValue: 38, wage: 200000 },
+  { id: "doku", name: "Jérémy Doku", age: 22, position: "LW", clubId: "mci", country: "Belgia", ovr: 83, potential: 90, marketValue: 65, wage: 100000 },
+  { id: "grealish", name: "Jack Grealish", age: 29, position: "LW", clubId: "mci", country: "Inggris", ovr: 84, potential: 84, marketValue: 60, wage: 300000 },
+
+  // === ARSENAL ===
+  { id: "saka", name: "Bukayo Saka", age: 23, position: "RW", clubId: "ars", country: "Inggris", ovr: 89, potential: 92, marketValue: 150, wage: 220000 },
+  { id: "odegaard", name: "Martin Ødegaard", age: 26, position: "CAM", clubId: "ars", country: "Norwegia", ovr: 88, potential: 91, marketValue: 110, wage: 250000 },
+  { id: "rice", name: "Declan Rice", age: 26, position: "CDM", clubId: "ars", country: "Inggris", ovr: 87, potential: 89, marketValue: 90, wage: 220000 },
+  { id: "saliba", name: "William Saliba", age: 23, position: "CB", clubId: "ars", country: "Prancis", ovr: 87, potential: 92, marketValue: 80, wage: 150000 },
+  { id: "gabriel", name: "Gabriel Magalhães", age: 27, position: "CB", clubId: "ars", country: "Brasil", ovr: 86, potential: 87, marketValue: 60, wage: 150000 },
+  { id: "raya", name: "David Raya", age: 29, position: "GK", clubId: "ars", country: "Spanyol", ovr: 85, potential: 87, marketValue: 40, wage: 120000 },
+  { id: "havertz", name: "Kai Havertz", age: 25, position: "ST", clubId: "ars", country: "Jerman", ovr: 85, potential: 88, marketValue: 65, wage: 200000 },
+  { id: "martinelli", name: "Gabriel Martinelli", age: 23, position: "LW", clubId: "ars", country: "Brasil", ovr: 84, potential: 90, marketValue: 70, wage: 120000 },
+
+  // === REAL MADRID ===
   { id: "mbappe", name: "Kylian Mbappé", age: 25, position: "LW", clubId: "rma", country: "Prancis", ovr: 91, potential: 95, marketValue: 200, wage: 320000 },
-  { id: "yamal", name: "Lamine Yamal", age: 17, position: "RW", clubId: "fcb", country: "Spanyol", ovr: 89, potential: 96, marketValue: 200, wage: 150000 },
   { id: "bellingham", name: "Jude Bellingham", age: 21, position: "CAM", clubId: "rma", country: "Inggris", ovr: 90, potential: 95, marketValue: 180, wage: 250000 },
   { id: "vinicius", name: "Vinícius Jr", age: 24, position: "LW", clubId: "rma", country: "Brasil", ovr: 90, potential: 93, marketValue: 180, wage: 300000 },
-  { id: "saka", name: "Bukayo Saka", age: 23, position: "RW", clubId: "ars", country: "Inggris", ovr: 89, potential: 92, marketValue: 150, wage: 220000 },
-  { id: "ronaldo", name: "Cristiano Ronaldo", age: 39, position: "ST", clubId: "aln", country: "Portugal", ovr: 86, potential: 86, marketValue: 12, wage: 3400000 },
-  { id: "messi", name: "Lionel Messi", age: 37, position: "RW", clubId: "inter_miami", country: "Argentina", ovr: 88, potential: 88, marketValue: 25, wage: 1500000 },
-  { id: "salah", name: "Mohamed Salah", age: 32, position: "RW", clubId: "liv", country: "Mesir", ovr: 91, potential: 91, marketValue: 65, wage: 400000 },
-  { id: "kane", name: "Harry Kane", age: 31, position: "ST", clubId: "bay", country: "Inggris", ovr: 90, potential: 90, marketValue: 90, wage: 350000 },
+  { id: "rodrygo", name: "Rodrygo", age: 23, position: "RW", clubId: "rma", country: "Brasil", ovr: 86, potential: 90, marketValue: 90, wage: 180000 },
+  { id: "valverde", name: "Federico Valverde", age: 26, position: "CM", clubId: "rma", country: "Uruguay", ovr: 88, potential: 90, marketValue: 100, wage: 200000 },
+  { id: "courtois", name: "Thibaut Courtois", age: 32, position: "GK", clubId: "rma", country: "Belgia", ovr: 90, potential: 90, marketValue: 45, wage: 250000 },
+  { id: "rudiger", name: "Antonio Rüdiger", age: 31, position: "CB", clubId: "rma", country: "Jerman", ovr: 86, potential: 86, marketValue: 30, wage: 200000 },
+  { id: "endrick", name: "Endrick", age: 18, position: "ST", clubId: "rma", country: "Brasil", ovr: 78, potential: 92, marketValue: 40, wage: 50000 },
+  { id: "guler", name: "Arda Güler", age: 19, position: "CAM", clubId: "rma", country: "Turki", ovr: 78, potential: 90, marketValue: 30, wage: 40000 },
+
+  // === BARCELONA ===
+  { id: "yamal", name: "Lamine Yamal", age: 17, position: "RW", clubId: "fcb", country: "Spanyol", ovr: 89, potential: 96, marketValue: 200, wage: 150000 },
   { id: "lewa", name: "Robert Lewandowski", age: 36, position: "ST", clubId: "fcb", country: "Polandia", ovr: 88, potential: 88, marketValue: 30, wage: 400000 },
+  { id: "raphinha", name: "Raphinha", age: 27, position: "LW", clubId: "fcb", country: "Brasil", ovr: 86, potential: 88, marketValue: 60, wage: 180000 },
+  { id: "pedri", name: "Pedri", age: 21, position: "CM", clubId: "fcb", country: "Spanyol", ovr: 86, potential: 92, marketValue: 90, wage: 150000 },
+  { id: "gavi", name: "Gavi", age: 20, position: "CM", clubId: "fcb", country: "Spanyol", ovr: 84, potential: 91, marketValue: 60, wage: 120000 },
+  { id: "terstegen", name: "Marc-André ter Stegen", age: 32, position: "GK", clubId: "fcb", country: "Jerman", ovr: 87, potential: 87, marketValue: 30, wage: 200000 },
+  { id: "cubarsi", name: "Pau Cubarsí", age: 17, position: "CB", clubId: "fcb", country: "Spanyol", ovr: 80, potential: 91, marketValue: 40, wage: 30000 },
+
+  // === LIVERPOOL ===
+  { id: "salah", name: "Mohamed Salah", age: 32, position: "RW", clubId: "liv", country: "Mesir", ovr: 91, potential: 91, marketValue: 65, wage: 400000 },
+  { id: "vvd", name: "Virgil van Dijk", age: 33, position: "CB", clubId: "liv", country: "Belanda", ovr: 89, potential: 89, marketValue: 45, wage: 300000 },
+  { id: "alisson", name: "Alisson Becker", age: 31, position: "GK", clubId: "liv", country: "Brasil", ovr: 89, potential: 89, marketValue: 50, wage: 250000 },
+  { id: "trent", name: "Trent Alexander-Arnold", age: 25, position: "RB", clubId: "liv", country: "Inggris", ovr: 87, potential: 91, marketValue: 90, wage: 220000 },
+  { id: "diaz", name: "Luis Díaz", age: 27, position: "LW", clubId: "liv", country: "Kolombia", ovr: 86, potential: 88, marketValue: 70, wage: 150000 },
+  { id: "macallister", name: "Alexis Mac Allister", age: 25, position: "CM", clubId: "liv", country: "Argentina", ovr: 86, potential: 89, marketValue: 70, wage: 160000 },
+  { id: "nunez", name: "Darwin Núñez", age: 25, position: "ST", clubId: "liv", country: "Uruguay", ovr: 84, potential: 88, marketValue: 65, wage: 140000 },
+
+  // === BAYERN MUNICH ===
+  { id: "kane", name: "Harry Kane", age: 31, position: "ST", clubId: "bay", country: "Inggris", ovr: 90, potential: 90, marketValue: 90, wage: 350000 },
+  { id: "musiala", name: "Jamal Musiala", age: 21, position: "CAM", clubId: "bay", country: "Jerman", ovr: 87, potential: 94, marketValue: 110, wage: 200000 },
+  { id: "kimmich", name: "Joshua Kimmich", age: 29, position: "CDM", clubId: "bay", country: "Jerman", ovr: 87, potential: 88, marketValue: 55, wage: 250000 },
+  { id: "neuer", name: "Manuel Neuer", age: 38, position: "GK", clubId: "bay", country: "Jerman", ovr: 86, potential: 86, marketValue: 15, wage: 250000 },
+  { id: "sane", name: "Leroy Sané", age: 28, position: "RW", clubId: "bay", country: "Jerman", ovr: 86, potential: 88, marketValue: 60, wage: 200000 },
+
+  // === PSG ===
+  { id: "dembele", name: "Ousmane Dembélé", age: 27, position: "LW", clubId: "psg", country: "Prancis", ovr: 90, potential: 90, marketValue: 80, wage: 250000 },
+  { id: "hakimi", name: "Achraf Hakimi", age: 26, position: "RB", clubId: "psg", country: "Maroko", ovr: 86, potential: 88, marketValue: 60, wage: 200000 },
+  { id: "donnarumma", name: "Gianluigi Donnarumma", age: 25, position: "GK", clubId: "psg", country: "Italia", ovr: 87, potential: 90, marketValue: 55, wage: 250000 },
+  { id: "zaire", name: "Warren Zaïre-Emery", age: 18, position: "CM", clubId: "psg", country: "Prancis", ovr: 82, potential: 92, marketValue: 60, wage: 60000 },
+
+  // === AL NASSR (ARAB SAUDI) ===
+  { id: "ronaldo", name: "Cristiano Ronaldo", age: 39, position: "ST", clubId: "aln", country: "Portugal", ovr: 86, potential: 86, marketValue: 12, wage: 3400000 },
+  { id: "mane", name: "Sadio Mané", age: 32, position: "LW", clubId: "aln", country: "Senegal", ovr: 84, potential: 84, marketValue: 25, wage: 800000 },
+  { id: "brozovic", name: "Marcelo Brozović", age: 32, position: "CDM", clubId: "aln", country: "Kroasia", ovr: 85, potential: 85, marketValue: 25, wage: 500000 },
+
+  // === INTER MIAMI ===
+  { id: "messi", name: "Lionel Messi", age: 37, position: "RW", clubId: "inter_miami", country: "Argentina", ovr: 88, potential: 88, marketValue: 25, wage: 1500000 },
+
+  // === PEMAIN INDONESIA (REAL) ===
   { id: "klok", name: "Marc Klok", age: 31, position: "CM", clubId: "psb", country: "Indonesia", ovr: 72, potential: 72, marketValue: 0.4, wage: 2000 },
   { id: "ridho", name: "Rizky Ridho", age: 23, position: "CB", clubId: "psj", country: "Indonesia", ovr: 71, potential: 78, marketValue: 0.5, wage: 2500 },
   { id: "marselino", name: "Marselino Ferdinan", age: 20, position: "CAM", clubId: "oxford", country: "Indonesia", ovr: 68, potential: 80, marketValue: 0.3, wage: 3000 },
@@ -118,14 +182,8 @@ const realPlayers = [
   { id: "witan", name: "Witan Sulaeman", age: 23, position: "LW", clubId: "psj", country: "Indonesia", ovr: 68, potential: 76, marketValue: 0.3, wage: 1400 },
   { id: "rivan", name: "Rivan Tawainella", age: 24, position: "CM", clubId: "psj", country: "Indonesia", ovr: 65, potential: 72, marketValue: 0.2, wage: 1000 },
   { id: "drajad", name: "Drajad Dwi Cahyo", age: 25, position: "GK", clubId: "pby", country: "Indonesia", ovr: 67, potential: 72, marketValue: 0.25, wage: 1200 },
-  { id: "taisei", name: "Taisei Marukawa", age: 27, position: "CAM", clubId: "pby", country: "Jepang", ovr: 70, potential: 71, marketValue: 0.3, wage: 1500 },
-  { id: "risaldi", name: "Rizky Dwi Febrianto", age: 27, position: "RB", clubId: "blu", country: "Indonesia", ovr: 66, potential: 68, marketValue: 0.2, wage: 1100 },
-  { id: "ilija", name: "Ilija Spasojević", age: 37, position: "ST", clubId: "blu", country: "Indonesia", ovr: 69, potential: 69, marketValue: 0.15, wage: 1800 },
-  { id: "stefano", name: "Stefano Lilipaly", age: 34, position: "ST", clubId: "bor", country: "Indonesia", ovr: 68, potential: 68, marketValue: 0.15, wage: 1600 },
   { id: "makan", name: "Makan Konaté", age: 34, position: "ST", clubId: "are", country: "Mali", ovr: 69, potential: 69, marketValue: 0.2, wage: 1700 },
-  { id: "dedik", name: "Dedik Setiawan", age: 30, position: "ST", clubId: "are", country: "Indonesia", ovr: 67, potential: 68, marketValue: 0.2, wage: 1400 },
   { id: "yakob", name: "Yakob Sayuri", age: 27, position: "RW", clubId: "psm", country: "Indonesia", ovr: 66, potential: 68, marketValue: 0.2, wage: 1200 },
-  { id: "arif", name: "Arif Satria", age: 24, position: "CB", clubId: "psm", country: "Indonesia", ovr: 66, potential: 71, marketValue: 0.2, wage: 1200 },
 ];
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
