@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>Football Manager Text</title>
+<meta name="theme-color" content="#0a0a0a" />
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E⚽%3C/text%3E%3C/svg%3E" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E⚽%3C/text%3E%3C/svg%3E" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: { gold: '#d4af37', neon: '#39ff14', panel: '#121212' }
+      }
+    }
+  }
+</script>
+
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<style>
+  html, body { background:#0a0a0a; color:#fff; font-family: system-ui, -apple-system, sans-serif; margin:0; padding:0; }
+  .gold-text { color:#d4af37; }
+  .neon-text { color:#39ff14; text-shadow: 0 0 8px rgba(57,255,20,0.6); }
+  .panel { background:#121212; border:1px solid #2a2a2a; border-radius:8px; }
+  .btn { transition: all 0.15s; cursor:pointer; }
+  .btn:hover { transform: translateY(-1px); }
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-thumb { background:#333; border-radius:3px; }
+</style>
+</head>
+<body>
+<div id="root"><div style="padding:40px;text-align:center;color:#d4af37;">⚽ Loading Game...</div></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useMemo } = React;
+
+// ============================================================================
+// DATABASE ASLI DUNIA NYATA — Musim 2024/2025
+// ============================================================================
+const leagues = [
+  { id: "eng_prem", name: "Premier League", country: "Inggris", tier: 1 },
+  { id: "eng_champ", name: "EFL Championship", country: "Inggris", tier: 2 },
+  { id: "esp_laliga", name: "La Liga", country: "Spanyol", tier: 1 },
+  { id: "esp_segunda", name: "Segunda División", country: "Spanyol", tier: 2 },
+  { id: "ita_seriea", name: "Serie A", country: "Italia", tier: 1 },
+  { id: "ita_serieb", name: "Serie B", country: "Italia", tier: 2 },
+  { id: "ger_bundes", name: "Bundesliga", country: "Jerman", tier: 1 },
+  { id: "ger_bundes2", name: "2. Bundesliga", country: "Jerman", tier: 2 },
+  { id: "fra_ligue1", name: "Ligue 1", country: "Prancis", tier: 1 },
+  { id: "fra_ligue2", name: "Ligue 2", country: "Prancis", tier: 2 },
+  { id: "ned_eredivisie", name: "Eredivisie", country: "Belanda", tier: 1 },
+  { id: "por_primeira", name: "Primeira Liga", country: "Portugal", tier: 1 },
+  { id: "tur_superlig", name: "Süper Lig", country: "Turki", tier: 1 },
+  { id: "rus_premier", name: "Russian Premier League", country: "Rusia", tier: 1 },
+  { id: "bel_proleague", name: "Belgian Pro League", country: "Belgia", tier: 1 },
+  { id: "irl_premier", name: "League of Ireland", country: "Irlandia", tier: 1 },
+  { id: "sco_premiership", name: "Scottish Premiership", country: "Skotlandia", tier: 1 },
+  { id: "jpn_j1", name: "J1 League", country: "Jepang", tier: 1 },
+  { id: "kor_kleague1", name: "K League 1", country: "Korea Selatan", tier: 1 },
+  { id: "chn_csl", name: "Chinese Super League", country: "China", tier: 1 },
+  { id: "sau_proleague", name: "Saudi Pro League", country: "Arab Saudi", tier: 1 },
+  { id: "aus_aleague", name: "A-League Men", country: "Australia", tier: 1 },
+  { id: "tha_league1", name: "Thai League 1", country: "Thailand", tier: 1 },
+  { id: "vie_vleague1", name: "V.League 1", country: "Vietnam", tier: 1 },
+  { id: "khm_premier", name: "Cambodian Premier League", country: "Kamboja", tier: 1 },
+  { id: "mas_super", name: "Malaysia Super League", country: "Malaysia", tier: 1 },
+  { id: "sgp_premier", name: "Singapore Premier League", country: "Singapura", tier: 1 },
+  { id: "phi_football", name: "Philippines Football League", country: "Filipina", tier: 1 },
+  { id: "idn_liga1", name: "Liga 1 Indonesia", country: "Indonesia", tier: 1 },
+  { id: "idn_liga2", name: "Liga 2 Indonesia", country: "Indonesia", tier: 2 },
+  { id: "usa_mls", name: "Major League Soccer", country: "Amerika Serikat", tier: 1 },
+  { id: "bra_seriea", name: "Brasileirão Série A", country: "Brasil", tier: 1 },
+  { id: "arg_primera", name: "Argentine Primera División", country: "Argentina", tier: 1 },
+  { id: "rsa_psl", name: "South African Premier Division", country: "Afrika Selatan", tier: 1 },
+  { id: "nga_npfl", name: "Nigeria Premier Football League", country: "Nigeria", tier: 1 },
+  { id: "civ_ligue1", name: "Ligue 1 Ivory Coast", country: "Pantai Gading", tier: 1 },
+  { id: "mar_botola", name: "Botola Pro", country: "Maroko", tier: 1 },
+  { id: "egy_premier", name: "Egyptian Premier League", country: "Mesir", tier: 1 },
+];
+
+const clubs = [
+  { id: "mci", name: "Manchester City", country: "Inggris", leagueId: "eng_prem", stadium: "Etihad Stadium", capacity: 53400, transferBudget: 150, jerseyColor: "#6CABDD" },
+  { id: "ars", name: "Arsenal", country: "Inggris", leagueId: "eng_prem", stadium: "Emirates Stadium", capacity: 60704, transferBudget: 120, jerseyColor: "#EF0107" },
+  { id: "liv", name: "Liverpool", country: "Inggris", leagueId: "eng_prem", stadium: "Anfield", capacity: 61276, transferBudget: 110, jerseyColor: "#C8102E" },
+  { id: "mun", name: "Manchester United", country: "Inggris", leagueId: "eng_prem", stadium: "Old Trafford", capacity: 74310, transferBudget: 100, jerseyColor: "#DA291C" },
+  { id: "che", name: "Chelsea", country: "Inggris", leagueId: "eng_prem", stadium: "Stamford Bridge", capacity: 40343, transferBudget: 130, jerseyColor: "#034694" },
+  { id: "tot", name: "Tottenham Hotspur", country: "Inggris", leagueId: "eng_prem", stadium: "Tottenham Hotspur Stadium", capacity: 62062, transferBudget: 90, jerseyColor: "#132257" },
+  { id: "new", name: "Newcastle United", country: "Inggris", leagueId: "eng_prem", stadium: "St James' Park", capacity: 52305, transferBudget: 80, jerseyColor: "#241F20" },
+  { id: "avl", name: "Aston Villa", country: "Inggris", leagueId: "eng_prem", stadium: "Villa Park", capacity: 42657, transferBudget: 60, jerseyColor: "#95BFE5" },
+  { id: "bha", name: "Brighton", country: "Inggris", leagueId: "eng_prem", stadium: "Amex Stadium", capacity: 31800, transferBudget: 55, jerseyColor: "#0057B8" },
+  { id: "whu", name: "West Ham", country: "Inggris", leagueId: "eng_prem", stadium: "London Stadium", capacity: 62500, transferBudget: 50, jerseyColor: "#7A263A" },
+  { id: "sunderland", name: "Sunderland", country: "Inggris", leagueId: "eng_champ", stadium: "Stadium of Light", capacity: 49000, transferBudget: 20, jerseyColor: "#EB172B" },
+  { id: "oxford", name: "Oxford United", country: "Inggris", leagueId: "eng_champ", stadium: "Kassam Stadium", capacity: 12500, transferBudget: 5, jerseyColor: "#F9E300" },
+  { id: "rma", name: "Real Madrid", country: "Spanyol", leagueId: "esp_laliga", stadium: "Santiago Bernabéu", capacity: 81044, transferBudget: 180, jerseyColor: "#FFFFFF" },
+  { id: "fcb", name: "Barcelona", country: "Spanyol", leagueId: "esp_laliga", stadium: "Spotify Camp Nou", capacity: 99354, transferBudget: 160, jerseyColor: "#A50044" },
+  { id: "atm", name: "Atlético Madrid", country: "Spanyol", leagueId: "esp_laliga", stadium: "Metropolitano", capacity: 70813, transferBudget: 120, jerseyColor: "#CB3524" },
+  { id: "sev", name: "Sevilla", country: "Spanyol", leagueId: "esp_laliga", stadium: "Sánchez-Pizjuán", capacity: 43883, transferBudget: 50, jerseyColor: "#D4001A" },
+  { id: "vil", name: "Villarreal", country: "Spanyol", leagueId: "esp_laliga", stadium: "La Cerámica", capacity: 23500, transferBudget: 35, jerseyColor: "#FFE667" },
+  { id: "rso", name: "Real Sociedad", country: "Spanyol", leagueId: "esp_laliga", stadium: "Reale Arena", capacity: 39500, transferBudget: 40, jerseyColor: "#0067B1" },
+  { id: "bet", name: "Real Betis", country: "Spanyol", leagueId: "esp_laliga", stadium: "Benito Villamarín", capacity: 60721, transferBudget: 30, jerseyColor: "#00954C" },
+  { id: "int", name: "Inter Milan", country: "Italia", leagueId: "ita_seriea", stadium: "San Siro", capacity: 75923, transferBudget: 90, jerseyColor: "#0068A8" },
+  { id: "acm", name: "AC Milan", country: "Italia", leagueId: "ita_seriea", stadium: "San Siro", capacity: 75923, transferBudget: 85, jerseyColor: "#FB090B" },
+  { id: "juv", name: "Juventus", country: "Italia", leagueId: "ita_seriea", stadium: "Allianz Stadium", capacity: 41507, transferBudget: 80, jerseyColor: "#000000" },
+  { id: "nap", name: "Napoli", country: "Italia", leagueId: "ita_seriea", stadium: "Maradona", capacity: 54726, transferBudget: 70, jerseyColor: "#12A0D7" },
+  { id: "rom", name: "AS Roma", country: "Italia", leagueId: "ita_seriea", stadium: "Olimpico", capacity: 70634, transferBudget: 60, jerseyColor: "#8E1F2F" },
+  { id: "laz", name: "Lazio", country: "Italia", leagueId: "ita_seriea", stadium: "Olimpico", capacity: 70634, transferBudget: 45, jerseyColor: "#87D8F7" },
+  { id: "ata", name: "Atalanta", country: "Italia", leagueId: "ita_seriea", stadium: "Gewiss Stadium", capacity: 21747, transferBudget: 40, jerseyColor: "#1E71B8" },
+  { id: "bay", name: "Bayern Munich", country: "Jerman", leagueId: "ger_bundes", stadium: "Allianz Arena", capacity: 75024, transferBudget: 140, jerseyColor: "#DC052D" },
+  { id: "bvb", name: "Borussia Dortmund", country: "Jerman", leagueId: "ger_bundes", stadium: "Signal Iduna Park", capacity: 81365, transferBudget: 80, jerseyColor: "#FDE100" },
+  { id: "b04", name: "Bayer Leverkusen", country: "Jerman", leagueId: "ger_bundes", stadium: "BayArena", capacity: 30210, transferBudget: 60, jerseyColor: "#E32219" },
+  { id: "rbl", name: "RB Leipzig", country: "Jerman", leagueId: "ger_bundes", stadium: "Red Bull Arena", capacity: 47069, transferBudget: 75, jerseyColor: "#DD0741" },
+  { id: "sge", name: "Eintracht Frankfurt", country: "Jerman", leagueId: "ger_bundes", stadium: "Deutsche Bank Park", capacity: 51500, transferBudget: 40, jerseyColor: "#E1000F" },
+  { id: "vfb", name: "VfB Stuttgart", country: "Jerman", leagueId: "ger_bundes", stadium: "MHPArena", capacity: 60449, transferBudget: 35, jerseyColor: "#E32219" },
+  { id: "psg", name: "Paris Saint-Germain", country: "Prancis", leagueId: "fra_ligue1", stadium: "Parc des Princes", capacity: 48583, transferBudget: 200, jerseyColor: "#004170" },
+  { id: "mar", name: "Olympique Marseille", country: "Prancis", leagueId: "fra_ligue1", stadium: "Vélodrome", capacity: 67394, transferBudget: 50, jerseyColor: "#2FAEE0" },
+  { id: "asm", name: "AS Monaco", country: "Prancis", leagueId: "fra_ligue1", stadium: "Louis II", capacity: 18523, transferBudget: 60, jerseyColor: "#E63946" },
+  { id: "lyo", name: "Olympique Lyon", country: "Prancis", leagueId: "fra_ligue1", stadium: "Groupama Stadium", capacity: 59186, transferBudget: 40, jerseyColor: "#1B3D8F" },
+  { id: "lil", name: "Lille", country: "Prancis", leagueId: "fra_ligue1", stadium: "Stade Pierre-Mauroy", capacity: 50186, transferBudget: 30, jerseyColor: "#E01E13" },
+  { id: "aln", name: "Al Nassr", country: "Arab Saudi", leagueId: "sau_proleague", stadium: "Al-Awwal Park", capacity: 25000, transferBudget: 150, jerseyColor: "#FDD900" },
+  { id: "alh", name: "Al Hilal", country: "Arab Saudi", leagueId: "sau_proleague", stadium: "Kingdom Arena", capacity: 30000, transferBudget: 180, jerseyColor: "#1E3A8A" },
+  { id: "ali", name: "Al Ittihad", country: "Arab Saudi", leagueId: "sau_proleague", stadium: "King Abdullah Sports City", capacity: 62345, transferBudget: 120, jerseyColor: "#F5C518" },
+  { id: "ala", name: "Al Ahli", country: "Arab Saudi", leagueId: "sau_proleague", stadium: "King Abdullah Sports City", capacity: 62345, transferBudget: 100, jerseyColor: "#00A550" },
+  { id: "als", name: "Al Shabab", country: "Arab Saudi", leagueId: "sau_proleague", stadium: "Al-Shabab Club Stadium", capacity: 15000, transferBudget: 60, jerseyColor: "#FFFFFF" },
+  { id: "psb", name: "Persib Bandung", country: "Indonesia", leagueId: "idn_liga1", stadium: "Gelora Bandung Lautan Api", capacity: 38000, transferBudget: 2, jerseyColor: "#1E3A8A" },
+  { id: "psj", name: "Persija Jakarta", country: "Indonesia", leagueId: "idn_liga1", stadium: "Jakarta International Stadium", capacity: 82000, transferBudget: 2.5, jerseyColor: "#F97316" },
+  { id: "are", name: "Arema FC", country: "Indonesia", leagueId: "idn_liga1", stadium: "Kanjuruhan", capacity: 42000, transferBudget: 1.5, jerseyColor: "#1D4ED8" },
+  { id: "pby", name: "Persebaya Surabaya", country: "Indonesia", leagueId: "idn_liga1", stadium: "Gelora Bung Tomo", capacity: 55000, transferBudget: 1.8, jerseyColor: "#16A34A" },
+  { id: "blu", name: "Bali United", country: "Indonesia", leagueId: "idn_liga1", stadium: "Kapten I Wayan Dipta", capacity: 25318, transferBudget: 2, jerseyColor: "#DC2626" },
+  { id: "bor", name: "Borneo FC", country: "Indonesia", leagueId: "idn_liga1", stadium: "Segiri", capacity: 16000, transferBudget: 1.5, jerseyColor: "#F59E0B" },
+  { id: "psm", name: "PSM Makassar", country: "Indonesia", leagueId: "idn_liga1", stadium: "Andi Mattalatta", capacity: 15000, transferBudget: 1.2, jerseyColor: "#EF4444" },
+  { id: "persis", name: "Persis Solo", country: "Indonesia", leagueId: "idn_liga1", stadium: "Manahan", capacity: 20000, transferBudget: 1.5, jerseyColor: "#DC2626" },
+  { id: "madura", name: "Madura United", country: "Indonesia", leagueId: "idn_liga1", stadium: "Gelora Bangkalan", capacity: 15000, transferBudget: 1.2, jerseyColor: "#DC2626" },
+  { id: "aja", name: "Ajax", country: "Belanda", leagueId: "ned_eredivisie", stadium: "Johan Cruijff ArenA", capacity: 55885, transferBudget: 40, jerseyColor: "#D2122E" },
+  { id: "psv", name: "PSV Eindhoven", country: "Belanda", leagueId: "ned_eredivisie", stadium: "Philips Stadion", capacity: 35000, transferBudget: 35, jerseyColor: "#ED1C24" },
+  { id: "fey", name: "Feyenoord", country: "Belanda", leagueId: "ned_eredivisie", stadium: "De Kuip", capacity: 47500, transferBudget: 30, jerseyColor: "#E4002B" },
+  { id: "almere", name: "Almere City", country: "Belanda", leagueId: "ned_eredivisie", stadium: "Yanmar Stadion", capacity: 4501, transferBudget: 3, jerseyColor: "#E4002B" },
+  { id: "ben", name: "Benfica", country: "Portugal", leagueId: "por_primeira", stadium: "Estádio da Luz", capacity: 64642, transferBudget: 50, jerseyColor: "#E30613" },
+  { id: "por", name: "FC Porto", country: "Portugal", leagueId: "por_primeira", stadium: "Dragão", capacity: 50033, transferBudget: 45, jerseyColor: "#0033A0" },
+  { id: "spl", name: "Sporting CP", country: "Portugal", leagueId: "por_primeira", stadium: "José Alvalade", capacity: 50095, transferBudget: 40, jerseyColor: "#008057" },
+  { id: "gal", name: "Galatasaray", country: "Turki", leagueId: "tur_superlig", stadium: "RAMS Park", capacity: 53978, transferBudget: 60, jerseyColor: "#FDB912" },
+  { id: "fen", name: "Fenerbahçe", country: "Turki", leagueId: "tur_superlig", stadium: "Şükrü Saracoğlu", capacity: 47430, transferBudget: 55, jerseyColor: "#FFED00" },
+  { id: "zen", name: "Zenit Saint Petersburg", country: "Rusia", leagueId: "rus_premier", stadium: "Krestovsky", capacity: 67800, transferBudget: 70, jerseyColor: "#1E88E5" },
+  { id: "cel", name: "Celtic", country: "Skotlandia", leagueId: "sco_premiership", stadium: "Celtic Park", capacity: 60411, transferBudget: 25, jerseyColor: "#018749" },
+  { id: "rng", name: "Rangers", country: "Skotlandia", leagueId: "sco_premiership", stadium: "Ibrox", capacity: 50987, transferBudget: 20, jerseyColor: "#1B458F" },
+  { id: "kaw", name: "Kawasaki Frontale", country: "Jepang", leagueId: "jpn_j1", stadium: "Todoroki", capacity: 26232, transferBudget: 15, jerseyColor: "#00A0E9" },
+  { id: "uls", name: "Ulsan HD", country: "Korea Selatan", leagueId: "kor_kleague1", stadium: "Munsu", capacity: 44474, transferBudget: 18, jerseyColor: "#005BAC" },
+  { id: "shp", name: "Shanghai Port", country: "China", leagueId: "chn_csl", stadium: "Pudong Arena", capacity: 33765, transferBudget: 25, jerseyColor: "#E60012" },
+  { id: "syd", name: "Sydney FC", country: "Australia", leagueId: "aus_aleague", stadium: "Allianz Stadium", capacity: 45500, transferBudget: 8, jerseyColor: "#003DA5" },
+  { id: "bur", name: "Buriram United", country: "Thailand", leagueId: "tha_league1", stadium: "Chang Arena", capacity: 32600, transferBudget: 6, jerseyColor: "#0033A0" },
+  { id: "hag", name: "Hanoi FC", country: "Vietnam", leagueId: "vie_vleague1", stadium: "Hàng Đẫy", capacity: 22500, transferBudget: 5, jerseyColor: "#DC2626" },
+  { id: "jdt", name: "Johor Darul Ta'zim", country: "Malaysia", leagueId: "mas_super", stadium: "Sultan Ibrahim", capacity: 40000, transferBudget: 10, jerseyColor: "#1E40AF" },
+  { id: "scf", name: "Seattle Sounders", country: "Amerika Serikat", leagueId: "usa_mls", stadium: "Lumen Field", capacity: 68740, transferBudget: 20, jerseyColor: "#5D9732" },
+  { id: "inter_miami", name: "Inter Miami CF", country: "Amerika Serikat", leagueId: "usa_mls", stadium: "Chase Stadium", capacity: 21550, transferBudget: 15, jerseyColor: "#F7B5CD" },
+  { id: "fla", name: "Flamengo", country: "Brasil", leagueId: "bra_seriea", stadium: "Maracanã", capacity: 82238, transferBudget: 40, jerseyColor: "#C52613" },
+  { id: "riv", name: "River Plate", country: "Argentina", leagueId: "arg_primera", stadium: "Monumental", capacity: 83214, transferBudget: 30, jerseyColor: "#FFFFFF" },
+  { id: "ahly", name: "Al Ahly", country: "Mesir", leagueId: "egy_premier", stadium: "Cairo International", capacity: 74100, transferBudget: 15, jerseyColor: "#D32F2F" },
+];
+
+const realPlayers = [
+  { id: "haaland", name: "Erling Haaland", age: 24, position: "CF", clubId: "mci", country: "Norwegia", ovr: 91, potential: 94, marketValue: 200, wage: 470000 },
+  { id: "mbappe", name: "Kylian Mbappé", age: 25, position: "LW", clubId: "rma", country: "Prancis", ovr: 91, potential: 95, marketValue: 200, wage: 320000 },
+  { id: "yamal", name: "Lamine Yamal", age: 17, position: "RW", clubId: "fcb", country: "Spanyol", ovr: 89, potential: 96, marketValue: 200, wage: 150000 },
+  { id: "bellingham", name: "Jude Bellingham", age: 21, position: "CAM", clubId: "rma", country: "Inggris", ovr: 90, potential: 95, marketValue: 180, wage: 250000 },
+  { id: "vinicius", name: "Vinícius Jr", age: 24, position: "LW", clubId: "rma", country: "Brasil", ovr: 90, potential: 93, marketValue: 180, wage: 300000 },
+  { id: "saka", name: "Bukayo Saka", age: 23, position: "RW", clubId: "ars", country: "Inggris", ovr: 89, potential: 92, marketValue: 150, wage: 220000 },
+  { id: "ronaldo", name: "Cristiano Ronaldo", age: 39, position: "ST", clubId: "aln", country: "Portugal", ovr: 86, potential: 86, marketValue: 12, wage: 3400000 },
+  { id: "messi", name: "Lionel Messi", age: 37, position: "RW", clubId: "inter_miami", country: "Argentina", ovr: 88, potential: 88, marketValue: 25, wage: 1500000 },
+  { id: "salah", name: "Mohamed Salah", age: 32, position: "RW", clubId: "liv", country: "Mesir", ovr: 91, potential: 91, marketValue: 65, wage: 400000 },
+  { id: "kdb", name: "Kevin De Bruyne", age: 33, position: "CM", clubId: "mci", country: "Belgia", ovr: 89, potential: 89, marketValue: 45, wage: 400000 },
+  { id: "kane", name: "Harry Kane", age: 31, position: "ST", clubId: "bay", country: "Inggris", ovr: 90, potential: 90, marketValue: 90, wage: 350000 },
+  { id: "lewa", name: "Robert Lewandowski", age: 36, position: "ST", clubId: "fcb", country: "Polandia", ovr: 88, potential: 88, marketValue: 30, wage: 400000 },
+  { id: "vvd", name: "Virgil van Dijk", age: 33, position: "CB", clubId: "liv", country: "Belanda", ovr: 89, potential: 89, marketValue: 45, wage: 300000 },
+  { id: "rodri", name: "Rodri", age: 28, position: "CDM", clubId: "mci", country: "Spanyol", ovr: 90, potential: 91, marketValue: 130, wage: 250000 },
+  { id: "odegaard", name: "Martin Ødegaard", age: 26, position: "CAM", clubId: "ars", country: "Norwegia", ovr: 88, potential: 91, marketValue: 110, wage: 250000 },
+  { id: "rice", name: "Declan Rice", age: 26, position: "CDM", clubId: "ars", country: "Inggris", ovr: 87, potential: 89, marketValue: 90, wage: 220000 },
+  { id: "palmer", name: "Cole Palmer", age: 22, position: "CAM", clubId: "che", country: "Inggris", ovr: 86, potential: 92, marketValue: 80, wage: 150000 },
+  { id: "wirtz", name: "Florian Wirtz", age: 21, position: "CAM", clubId: "b04", country: "Jerman", ovr: 88, potential: 94, marketValue: 130, wage: 200000 },
+  { id: "musiala", name: "Jamal Musiala", age: 21, position: "CAM", clubId: "bay", country: "Jerman", ovr: 87, potential: 94, marketValue: 110, wage: 200000 },
+  { id: "dembele", name: "Ousmane Dembélé", age: 27, position: "LW", clubId: "psg", country: "Prancis", ovr: 90, potential: 90, marketValue: 80, wage: 250000 },
+  { id: "hakimi", name: "Achraf Hakimi", age: 26, position: "RB", clubId: "psg", country: "Maroko", ovr: 86, potential: 88, marketValue: 60, wage: 200000 },
+  { id: "osimhen", name: "Victor Osimhen", age: 26, position: "ST", clubId: "nap", country: "Nigeria", ovr: 87, potential: 90, marketValue: 90, wage: 250000 },
+  { id: "lautaro", name: "Lautaro Martínez", age: 27, position: "ST", clubId: "int", country: "Argentina", ovr: 88, potential: 89, marketValue: 80, wage: 250000 },
+  { id: "kvara", name: "Khvicha Kvaratskhelia", age: 23, position: "LW", clubId: "psg", country: "Georgia", ovr: 86, potential: 91, marketValue: 80, wage: 180000 },
+  { id: "endrick", name: "Endrick", age: 18, position: "ST", clubId: "rma", country: "Brasil", ovr: 78, potential: 92, marketValue: 40, wage: 50000 },
+  { id: "guler", name: "Arda Güler", age: 19, position: "CAM", clubId: "rma", country: "Turki", ovr: 78, potential: 90, marketValue: 30, wage: 40000 },
+  { id: "zaire", name: "Warren Zaïre-Emery", age: 18, position: "CM", clubId: "psg", country: "Prancis", ovr: 82, potential: 92, marketValue: 60, wage: 60000 },
+  { id: "klok", name: "Marc Klok", age: 31, position: "CM", clubId: "psb", country: "Indonesia", ovr: 72, potential: 72, marketValue: 0.4, wage: 2000 },
+  { id: "ridho", name: "Rizky Ridho", age: 23, position: "CB", clubId: "psj", country: "Indonesia", ovr: 71, potential: 78, marketValue: 0.5, wage: 2500 },
+  { id: "marselino", name: "Marselino Ferdinan", age: 20, position: "CAM", clubId: "oxford", country: "Indonesia", ovr: 68, potential: 80, marketValue: 0.3, wage: 3000 },
+  { id: "haye", name: "Thom Haye", age: 29, position: "CM", clubId: "almere", country: "Indonesia", ovr: 71, potential: 72, marketValue: 0.6, wage: 2340 },
+  { id: "febri", name: "Muhammad Ferrari", age: 22, position: "CB", clubId: "psb", country: "Indonesia", ovr: 68, potential: 76, marketValue: 0.3, wage: 1500 },
+  { id: "arhan", name: "Pratama Arhan", age: 23, position: "LB", clubId: "psb", country: "Indonesia", ovr: 67, potential: 75, marketValue: 0.25, wage: 1200 },
+  { id: "beckham", name: "Beckham Putra", age: 23, position: "CAM", clubId: "psb", country: "Indonesia", ovr: 68, potential: 78, marketValue: 0.35, wage: 1400 },
+  { id: "witan", name: "Witan Sulaeman", age: 23, position: "LW", clubId: "psj", country: "Indonesia", ovr: 68, potential: 76, marketValue: 0.3, wage: 1400 },
+  { id: "rivan", name: "Rivan Tawainella", age: 24, position: "CM", clubId: "psj", country: "Indonesia", ovr: 65, potential: 72, marketValue: 0.2, wage: 1000 },
+  { id: "drajad", name: "Drajad Dwi Cahyo", age: 25, position: "GK", clubId: "pby", country: "Indonesia", ovr: 67, potential: 72, marketValue: 0.25, wage: 1200 },
+  { id: "taisei", name: "Taisei Marukawa", age: 27, position: "CAM", clubId: "pby", country: "Jepang", ovr: 70, potential: 71, marketValue: 0.3, wage: 1500 },
+  { id: "risaldi", name: "Rizky Dwi Febrianto", age: 27, position: "RB", clubId: "blu", country: "Indonesia", ovr: 66, potential: 68, marketValue: 0.2, wage: 1100 },
+  { id: "ilija", name: "Ilija Spasojević", age: 37, position: "ST", clubId: "blu", country: "Indonesia", ovr: 69, potential: 69, marketValue: 0.15, wage: 1800 },
+  { id: "stefano", name: "Stefano Lilipaly", age: 34, position: "ST", clubId: "bor", country: "Indonesia", ovr: 68, potential: 68, marketValue: 0.15, wage: 1600 },
+  { id: "makan", name: "Makan Konaté", age: 34, position: "ST", clubId: "are", country: "Mali", ovr: 69, potential: 69, marketValue: 0.2, wage: 1700 },
+  { id: "dedik", name: "Dedik Setiawan", age: 30, position: "ST", clubId: "are", country: "Indonesia", ovr: 67, potential: 68, marketValue: 0.2, wage: 1400 },
+  { id: "yakob", name: "Yakob Sayuri", age: 27, position: "RW", clubId: "psm", country: "Indonesia", ovr: 66, potential: 68, marketValue: 0.2, wage: 1200 },
+  { id: "arif", name: "Arif Satria", age: 24, position: "CB", clubId: "psm", country: "Indonesia", ovr: 66, potential: 71, marketValue: 0.2, wage: 1200 },
+];
+
+// Player generator (filler)
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const rand = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+const getClubById = (id) => clubs.find((c) => c.id === id);
+const getLeagueById = (id) => leagues.find((l) => l.id === id);
+const getClubsByLeague = (lId) => clubs.filter((c) => c.leagueId === lId);
+
+const getPlayerById = (id) => {
+  const real = realPlayers.find((p) => p.id === id);
+  if (real) return real;
+  const match = id.match(/^(.+)_f(\d+)$/);
+  if (match) {
+    const club = getClubById(match[1]);
+    if (club) {
+      const idx = parseInt(match[2]);
+      const baseOvr = club.transferBudget > 50 ? 78 : club.transferBudget > 10 ? 70 : 62;
+      const positions = ['GK', 'CB', 'LB', 'RB', 'CDM', 'CM', 'CAM', 'LW', 'RW', 'ST'];
+      const pos = positions[idx % positions.length];
+      const ovr = clamp(baseOvr + ((idx * 7) % 12) - 6, 50, 88);
+      return {
+        id, name: `${club.name.split(' ')[0]} #${idx + 1}`,
+        age: 20 + (idx % 14), position: pos, clubId: club.id,
+        country: club.country, ovr, potential: ovr + ((idx * 3) % 6),
+        marketValue: Math.max(0.1, Math.round((ovr - 50) * 0.5 * 10) / 10),
+        wage: ovr > 80 ? 80000 : ovr > 70 ? 15000 : 2000,
+      };
+    }
+  }
+  return null;
+};
+
+const getPlayersByClub = (clubId) => {
+  const real = realPlayers.filter((p) => p.clubId === clubId);
+  if (real.length >= 14) return real;
+  const club = getClubById(clubId);
+  if (!club) return real;
+  const needed = 14 - real.length;
+  const fillers = [];
+  for (let i = 0; i < needed; i++) {
+    const f = getPlayerById(`${clubId}_f${i}`);
+    if (f) fillers.push(f);
+  }
+  return [...real, ...fillers];
+};
+
+// All players list (for transfer/search)
+const allPlayers = [];
+clubs.forEach((c) => { allPlayers.push(...getPlayersByClub(c.id)); });
+
+// ============================================================================
+// GAME LOGIC
+// ============================================================================
+const CAREER_STAGES = [
+  { id: 'asisten', name: 'Asisten Pelatih', minRep: 0, salary: 3000 },
+  { id: 'manajer', name: 'Manajer', minRep: 25, salary: 15000 },
+  { id: 'dirtek', name: 'Direktur Teknik', minRep: 45, salary: 40000 },
+  { id: 'diror', name: 'Direktur Olahraga', minRep: 62, salary: 80000 },
+  { id: 'ceo', name: 'CEO', minRep: 78, salary: 180000 },
+  { id: 'presiden', name: 'Presiden Klub', minRep: 88, salary: 400000 },
+  { id: 'owner', name: 'Owner', minRep: 94, salary: 1000000 },
+];
+
+const FORMATIONS = ['4-3-3', '4-4-2', '3-5-2', '4-2-3-1', '5-3-2'];
+const STYLES = ['Tiki-Taka', 'Counter Attack', 'Gegenpressing', 'Parkir Bus', 'Long Ball'];
+const MENTALITIES = ['Defensif', 'Seimbang', 'Menyerang', 'Ultra Menyerang'];
+const TAB_LIST = ['dashboard', 'squad', 'tactics', 'transfer', 'training', 'database', 'career'];
+
+const fmtMoney = (n) => {
+  if (n >= 1e9) return (n / 1e9).toFixed(2) + ' M';
+  if (n >= 1e6) return (n / 1e6).toFixed(2) + ' Jt';
+  if (n >= 1e3) return (n / 1e3).toFixed(0) + ' rb';
+  return String(Math.round(n));
+};
+
+const getCareerStage = (rep) => {
+  let s = CAREER_STAGES[0];
+  for (const c of CAREER_STAGES) if (rep >= c.minRep) s = c;
+  return s;
+};
+
+const createNewGame = (name, clubId) => {
+  const club = getClubById(clubId);
+  const squad = getPlayersByClub(clubId).map((p) => p.id);
+  return {
+    manager: { name, reputation: 15, personalMoney: 50000 },
+    club: { id: clubId, budget: Math.floor(club.transferBudget * 1000000), facilities: 2, academy: 2 },
+    squad, formation: '4-3-3', mentality: 'Seimbang', style: 'Tiki-Taka',
+    week: 1,
+    season: { points: 0, played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0 },
+    history: [], lastMatch: null, notifications: [],
+  };
+};
+
+const applyMatchResult = (state, result) => {
+  const won = result.myGoals > result.oppGoals;
+  const draw = result.myGoals === result.oppGoals;
+  const repGain = won ? 3 : draw ? 1 : -1;
+  const newRep = clamp(state.manager.reputation + repGain, 0, 100);
+  const prize = won ? 500000 : draw ? 200000 : 50000;
+  return {
+    ...state,
+    manager: { ...state.manager, reputation: newRep, personalMoney: state.manager.personalMoney + (won ? 3000 : draw ? 1500 : 800) },
+    club: { ...state.club, budget: state.club.budget + prize },
+    week: state.week + 1,
+    season: {
+      played: state.season.played + 1,
+      wins: state.season.wins + (won ? 1 : 0),
+      draws: state.season.draws + (draw ? 1 : 0),
+      losses: state.season.losses + (!won && !draw ? 1 : 0),
+      points: state.season.points + (won ? 3 : draw ? 1 : 0),
+      gf: state.season.gf + result.myGoals,
+      ga: state.season.ga + result.oppGoals,
+    },
+    lastMatch: { opponent: result.opponent.name, score: `${result.myGoals}-${result.oppGoals}`, won, draw },
+    history: [...state.history, { week: state.week, opponent: result.opponent.name, score: `${result.myGoals}-${result.oppGoals}` }],
+    notifications: [...state.notifications, `M${state.week}: ${result.myGoals}-${result.oppGoals} vs ${result.opponent.name}`].slice(-10),
+  };
+};
+
+const simulateMatch = (state) => {
+  const myClub = getClubById(state.club.id);
+  const opponents = getClubsByLeague(myClub.leagueId).filter((c) => c.id !== myClub.id);
+  const opponent = opponents.length > 0 ? pick(opponents) : myClub;
+  const mySquad = state.squad.map(getPlayerById).filter(Boolean);
+  const oppSquad = getPlayersByClub(opponent.id);
+  const rating = (sq) => (sq.length ? sq.reduce((s, p) => s + p.ovr, 0) / sq.length : 65);
+  const myRating = rating(mySquad);
+  const oppRating = rating(oppSquad);
+  const myPower = myRating + 3 + rand(-4, 4);
+  const oppPower = oppRating + rand(-4, 4);
+  const events = [{ minute: 0, text: `⚽ Kick-off! ${myClub.name} vs ${opponent.name} di ${myClub.stadium}.`, type: 'info' }];
+  const attackers = mySquad.filter((p) => ['ST', 'CF', 'LW', 'RW', 'CAM', 'CM'].includes(p.position));
+  const oppAttackers = oppSquad.filter((p) => ['ST', 'CF', 'LW', 'RW', 'CAM', 'CM'].includes(p.position));
+  let myGoals = 0, oppGoals = 0;
+  for (let m = 1; m <= 90; m++) {
+    if (Math.random() < 0.08 * (myPower / (oppPower + 20))) {
+      if (Math.random() < 0.3 + (myRating - oppRating) / 100) {
+        const scorer = attackers.length ? pick(attackers) : { name: 'Pemain' };
+        myGoals++;
+        events.push({ minute: m, text: `⚽ GOAL! ${scorer.name} mencetak gol untuk ${myClub.name}! Skor ${myGoals}-${oppGoals}`, type: 'goal' });
+      } else {
+        events.push({ minute: m, text: `🎯 Peluang ${myClub.name} digagalkan!`, type: 'chance' });
+      }
+    }
+    if (Math.random() < 0.08 * (oppPower / (myPower + 20))) {
+      if (Math.random() < 0.3 + (oppRating - myRating) / 100) {
+        const scorer = oppAttackers.length ? pick(oppAttackers) : { name: 'Pemain' };
+        oppGoals++;
+        events.push({ minute: m, text: `⚽ GOAL! ${scorer.name} mencetak gol untuk ${opponent.name}. Skor ${myGoals}-${oppGoals}`, type: 'goal-opp' });
+      }
+    }
+  }
+  events.push({ minute: 90, text: `⏱️ Full-time! ${myClub.name} ${myGoals}-${oppGoals} ${opponent.name}`, type: 'final' });
+  return { opponent, myGoals, oppGoals, events };
+};
+
+// ============================================================================
+// COMPONENTS
+// ============================================================================
+function App() {
+  const [state, setState] = useState(null);
+  const [tab, setTab] = useState('dashboard');
+  const [matchLog, setMatchLog] = useState([]);
+  const [matchPlaying, setMatchPlaying] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('fm_save_v1');
+      if (saved) setState(JSON.parse(saved));
+    } catch (e) { /* ignore */ }
+  }, []);
+
+  useEffect(() => {
+    if (state) localStorage.setItem('fm_save_v1', JSON.stringify(state));
+  }, [state]);
+
+  const resetGame = () => {
+    if (window.confirm('Reset permainan? Semua progress akan hilang.')) {
+      localStorage.removeItem('fm_save_v1');
+      setState(null);
+      setTab('dashboard');
+      setMatchLog([]);
+    }
+  };
+
+  if (!state) return <StartScreen onStart={(name, clubId) => setState(createNewGame(name, clubId))} />;
+
+  return (
+    <div className="min-h-screen bg-black text-white">
+      <HUD state={state} onReset={resetGame} />
+      <nav className="flex overflow-x-auto gap-1 p-2 bg-zinc-900 border-b border-yellow-500/20 sticky top-0 z-10">
+        {TAB_LIST.map((t) => (
+          <button key={t} onClick={() => setTab(t)}
+            className={`btn px-3 py-2 text-xs md:text-sm rounded whitespace-nowrap ${tab === t ? 'bg-yellow-500 text-black font-bold' : 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'}`}>
+            {t.toUpperCase()}
+          </button>
+        ))}
+      </nav>
+      <main className="p-3 md:p-6 max-w-6xl mx-auto">
+        {tab === 'dashboard' && <Dashboard state={state} setState={setState} setTab={setTab} setMatchLog={setMatchLog} setMatchPlaying={setMatchPlaying} matchPlaying={matchPlaying} />}
+        {tab === 'squad' && <Squad state={state} setState={setState} />}
+        {tab === 'tactics' && <Tactics state={state} setState={setState} />}
+        {tab === 'transfer' && <Transfer state={state} setState={setState} />}
+        {tab === 'training' && <Training state={state} setState={setState} />}
+        {tab === 'database' && <DatabaseView />}
+        {tab === 'career' && <CareerView state={state} setState={setState} />}
+      </main>
+      {matchPlaying !== undefined && matchLog.length > 0 && (
+        <div className="fixed inset-0 bg-black/90 z-50 p-3 overflow-y-auto" onClick={() => {}}>
+          <MatchOverlay log={matchLog} playing={matchPlaying} state={state} onClose={() => { setMatchLog([]); setTab('dashboard'); }} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StartScreen({ onStart }) {
+  const [name, setName] = useState('Komandan');
+  const [leagueId, setLeagueId] = useState('eng_prem');
+  const [clubId, setClubId] = useState('mci');
+  const clubsInLeague = getClubsByLeague(leagueId);
+
+  useEffect(() => {
+    if (clubsInLeague.length > 0 && !clubsInLeague.find((c) => c.id === clubId)) {
+      setClubId(clubsInLeague[0].id);
+    }
+  }, [leagueId, clubId]);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-black via-zinc-950 to-black">
+      <div className="panel p-6 w-full max-w-lg">
+        <h1 className="text-2xl md:text-3xl font-bold gold-text text-center mb-1">⚽ FOOTBALL MANAGER TEXT</h1>
+        <p className="text-center text-xs text-gray-400 mb-6">From Manager to Owner — Career Mode</p>
+        <label className="block text-sm mb-1 text-gold">Nama Manajer</label>
+        <input value={name} onChange={(e) => setName(e.target.value)}
+          className="w-full mb-4 px-3 py-2 bg-zinc-900 border border-zinc-700 rounded focus:outline-none focus:border-yellow-500"
+          placeholder="Komandan" />
+        <label className="block text-sm mb-1 text-gold">Liga</label>
+        <select value={leagueId} onChange={(e) => setLeagueId(e.target.value)}
+          className="w-full mb-4 px-3 py-2 bg-zinc-900 border border-zinc-700 rounded">
+          {leagues.map((l) => <option key={l.id} value={l.id}>{l.name} ({l.country})</option>)}
+        </select>
+        <label className="block text-sm mb-1 text-gold">Klub</label>
+        <select value={clubId} onChange={(e) => setClubId(e.target.value)}
+          className="w-full mb-6 px-3 py-2 bg-zinc-900 border border-zinc-700 rounded">
+          {clubsInLeague.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+        </select>
+        <button onClick={() => onStart(name || 'Komandan', clubId)}
+          className="w-full py-3 bg-yellow-500 text-black font-bold rounded hover:bg-yellow-400 transition">
+          🚀 MULAI KARIR
+        </button>
+        <p className="text-center text-xs text-gray-500 mt-4">Data asli musim 2024/2025 · Transfermarkt & EA FC 26</p>
+      </div>
+    </div>
+  );
+}
+
+function HUD({ state, onReset }) {
+  const stage = getCareerStage(state.manager.reputation);
+  return (
+    <header className="bg-zinc-900 border-b border-yellow-500/30 px-3 py-3 flex flex-wrap gap-3 items-center justify-between">
+      <div className="flex items-center gap-3 flex-wrap text-xs md:text-sm">
+        <span className="px-2 py-1 rounded bg-yellow-500 text-black font-bold">JABATAN: {stage.name.toUpperCase()}</span>
+        <span className="neon-text">★ REP: {state.manager.reputation}</span>
+        <span className="gold-text">💰 PRIBADI: €{fmtMoney(state.manager.personalMoney)}</span>
+        <span className="text-green-400">🏦 KLUB: €{fmtMoney(state.club.budget)}</span>
+      </div>
+      <button onClick={onReset} className="text-xs text-red-400 hover:text-red-300 border border-red-500/40 rounded px-2 py-1">RESET</button>
+    </header>
+  );
+}
+
+function Dashboard({ state, setState, setTab, setMatchLog, setMatchPlaying, matchPlaying }) {
+  const club = getClubById(state.club.id);
+  const league = getLeagueById(club.leagueId);
+  const nextOpponent = useMemo(() => {
+    const opps = getClubsByLeague(club.leagueId).filter((c) => c.id !== club.id);
+    return opps.length ? pick(opps) : club;
+  }, [club]);
+
+  const handlePlay = async () => {
+    if (matchPlaying) return;
+    setMatchPlaying(true);
+    setMatchLog([]);
+    const result = simulateMatch(state);
+    for (const ev of result.events) {
+      await new Promise((r) => setTimeout(r, 180));
+      setMatchLog((prev) => [...prev, ev]);
+    }
+    setState((prev) => applyMatchResult(prev, result));
+    setMatchPlaying(false);
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="panel p-4">
+        <h2 className="text-xl font-bold gold-text mb-1">{club.name}</h2>
+        <p className="text-sm text-gray-400">{league.name} · {club.country}</p>
+        <p className="text-xs text-gray-500 mt-1">🏟️ {club.stadium} ({club.capacity.toLocaleString()} kursi)</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3 text-sm">
+          <Stat label="Minggu" value={state.week} />
+          <Stat label="Poin" value={state.season.points} />
+          <Stat label="Main" value={state.season.played} />
+          <Stat label="Selisih Gol" value={`${state.season.gf - state.season.ga >= 0 ? '+' : ''}${state.season.gf - state.season.ga}`} />
+        </div>
+      </div>
+      <div className="panel p-4">
+        <h3 className="text-lg font-bold text-yellow-400 mb-2">⚔️ Pertandingan Berikutnya</h3>
+        <p className="mb-3 text-gray-300">{club.name} vs <span className="gold-text font-bold">{nextOpponent.name}</span></p>
+        <button onClick={handlePlay} disabled={matchPlaying}
+          className="w-full py-3 bg-neon text-black font-bold rounded hover:brightness-110 disabled:opacity-50">
+          {matchPlaying ? '⏳ PERTANDINGAN BERLANGSUNG...' : '▶️ MAIN PERTANDINGAN'}
+        </button>
+      </div>
+      {state.lastMatch && (
+        <div className="panel p-4">
+          <h3 className="text-sm font-bold text-gray-400 mb-1">Hasil Terakhir</h3>
+          <p className={`text-lg font-bold ${state.lastMatch.won ? 'text-green-400' : state.lastMatch.draw ? 'text-yellow-400' : 'text-red-400'}`}>
+            {state.lastMatch.score} vs {state.lastMatch.opponent}
+          </p>
+        </div>
+      )}
+      {state.history.length > 0 && (
+        <div className="panel p-4">
+          <h3 className="text-sm font-bold text-gray-400 mb-2">Riwayat</h3>
+          <div className="space-y-1 text-sm max-h-40 overflow-y-auto">
+            {state.history.slice().reverse().slice(0, 10).map((h, i) => (
+              <div key={i} className="flex justify-between text-gray-300">
+                <span>M{h.week}</span><span>{h.opponent}</span><span className="font-mono">{h.score}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Stat({ label, value }) {
+  return (
+    <div className="bg-zinc-900 rounded p-2 text-center">
+      <div className="text-xs text-gray-500">{label}</div>
+      <div className="text-lg font-bold gold-text">{value}</div>
+    </div>
+  );
+}
+
+function Squad({ state, setState }) {
+  const squadPlayers = state.squad.map(getPlayerById).filter(Boolean);
+  const totalOvr = squadPlayers.length ? Math.round(squadPlayers.reduce((s, p) => s + p.ovr, 0) / squadPlayers.length) : 0;
+  const sellPlayer = (p) => {
+    if (!window.confirm(`Jual ${p.name} seharga €${fmtMoney(p.marketValue * 1000000 * 0.8)}?`)) return;
+    const value = p.marketValue * 1000000 * 0.8;
+    setState((prev) => ({
+      ...prev,
+      club: { ...prev.club, budget: prev.club.budget + value },
+      squad: prev.squad.filter((id) => id !== p.id),
+    }));
+  };
+  return (
+    <div className="space-y-3">
+      <div className="panel p-3 flex justify-between items-center">
+        <span className="text-sm text-gray-400">Total: <b className="text-white">{squadPlayers.length}</b></span>
+        <span className="text-sm">Rating: <b className="gold-text">{totalOvr}</b></span>
+      </div>
+      <div className="space-y-2">
+        {squadPlayers.sort((a, b) => b.ovr - a.ovr).map((p) => (
+          <div key={p.id} className="panel p-3 flex justify-between items-center">
+            <div className="flex-1">
+              <div className="font-bold">{p.name}</div>
+              <div className="text-xs text-gray-400">{p.position} · {p.age} thn · {p.country}</div>
+            </div>
+            <div className="text-right mr-3">
+              <div className="text-lg font-bold gold-text">{p.ovr}</div>
+              <div className="text-xs text-gray-500">€{fmtMoney(p.marketValue * 1000000)}</div>
+            </div>
+            <button onClick={() => sellPlayer(p)} className="text-xs bg-red-600 hover:bg-red-500 px-2 py-1 rounded">Jual</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Tactics({ state, setState }) {
+  return (
+    <div className="space-y-4">
+      <SelectField label="Formasi" value={state.formation} options={FORMATIONS} onChange={(v) => setState({ ...state, formation: v })} />
+      <SelectField label="Mentalitas" value={state.mentality} options={MENTALITIES} onChange={(v) => setState({ ...state, mentality: v })} />
+      <SelectField label="Gaya Main" value={state.style} options={STYLES} onChange={(v) => setState({ ...state, style: v })} />
+      <div className="panel p-4 text-sm text-gray-400 space-y-1">
+        <p>📋 Formasi mempengaruhi keseimbangan serangan & pertahanan.</p>
+        <p>💪 Mentalitas mempengaruhi agresivitas tim.</p>
+        <p>🎯 Gaya main memberi bonus spesifik.</p>
+      </div>
+    </div>
+  );
+}
+
+function SelectField({ label, value, options, onChange }) {
+  return (
+    <div className="panel p-4">
+      <label className="block text-sm mb-2 text-gold">{label}</label>
+      <select value={value} onChange={(e) => onChange(e.target.value)} className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded">
+        {options.map((o) => <option key={o} value={o}>{o}</option>)}
+      </select>
+    </div>
+  );
+}
+
+function Transfer({ state, setState }) {
+  const [search, setSearch] = useState('');
+  const [posFilter, setPosFilter] = useState('');
+  const available = useMemo(() => {
+    return allPlayers
+      .filter((p) => !state.squad.includes(p.id))
+      .filter((p) => !search || p.name.toLowerCase().includes(search.toLowerCase()))
+      .filter((p) => !posFilter || p.position === posFilter)
+      .sort((a, b) => b.ovr - a.ovr)
+      .slice(0, 60);
+  }, [search, posFilter, state.squad]);
+
+  const buyPlayer = (p) => {
+    const basePrice = p.marketValue * 1000000;
+    if (basePrice > state.club.budget) return window.alert('❌ Budget klub tidak cukup!');
+    const finalPrice = Math.round(basePrice * (1 + Math.random() * 0.3));
+    if (finalPrice > state.club.budget) return window.alert(`❌ Nego gagal — harga final €${fmtMoney(finalPrice)} melebihi budget.`);
+    if (!window.confirm(`Beli ${p.name} seharga €${fmtMoney(finalPrice)}?`)) return;
+    setState((prev) => ({
+      ...prev,
+      club: { ...prev.club, budget: prev.club.budget - finalPrice },
+      squad: [...prev.squad, p.id],
+      notifications: [...prev.notifications, `✅ ${p.name} bergabung`].slice(-10),
+    }));
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="panel p-3">
+        <div className="text-sm text-gray-400 mb-2">Budget: <span className="text-green-400 font-bold">€{fmtMoney(state.club.budget)}</span></div>
+        <input placeholder="🔍 Cari nama pemain..." value={search} onChange={(e) => setSearch(e.target.value)}
+          className="w-full px-3 py-2 mb-2 bg-zinc-900 border border-zinc-700 rounded" />
+        <select value={posFilter} onChange={(e) => setPosFilter(e.target.value)} className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded">
+          <option value="">Semua Posisi</option>
+          {['GK', 'CB', 'LB', 'RB', 'CDM', 'CM', 'CAM', 'LW', 'RW', 'ST', 'CF'].map((p) => <option key={p} value={p}>{p}</option>)}
+        </select>
+      </div>
+      {available.length === 0 && <div className="text-center text-gray-500 py-6">Tidak ada pemain ditemukan.</div>}
+      <div className="space-y-2">
+        {available.map((p) => {
+          const price = p.marketValue * 1000000;
+          const clubFrom = getClubById(p.clubId);
+          return (
+            <div key={p.id} className="panel p-3 flex justify-between items-center">
+              <div className="flex-1">
+                <div className="font-bold text-sm">{p.name}</div>
+                <div className="text-xs text-gray-400">{p.position} · {p.age} thn · {clubFrom?.name || p.country}</div>
+              </div>
+              <div className="text-right mr-3">
+                <div className="text-lg font-bold gold-text">{p.ovr}</div>
+                <div className="text-xs text-gray-500">€{fmtMoney(price)}</div>
+              </div>
+              <button onClick={() => buyPlayer(p)} disabled={price > state.club.budget}
+                className="text-xs bg-green-600 hover:bg-green-500 disabled:bg-zinc-700 disabled:text-gray-500 px-2 py-1 rounded">BELI</button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function Training({ state, setState }) {
+  const facCost = () => 500000 * state.club.facilities;
+  const acaCost = () => 400000 * state.club.academy;
+  const upgradeFacility = () => {
+    if (state.club.facilities >= 5) return window.alert('Sudah level maksimal!');
+    const cost = facCost();
+    if (cost > state.club.budget) return window.alert('Budget tidak cukup!');
+    setState({ ...state, club: { ...state.club, facilities: state.club.facilities + 1, budget: state.club.budget - cost } });
+  };
+  const upgradeAcademy = () => {
+    if (state.club.academy >= 5) return window.alert('Akademi sudah maksimal!');
+    const cost = acaCost();
+    if (cost > state.club.budget) return window.alert('Budget tidak cukup!');
+    setState({ ...state, club: { ...state.club, academy: state.club.academy + 1, budget: state.club.budget - cost } });
+  };
+  const trainSquad = () => {
+    const cost = 200000;
+    if (cost > state.club.budget) return window.alert('Budget tidak cukup!');
+    setState((prev) => ({ ...prev, club: { ...prev.club, budget: prev.club.budget - cost } }));
+    window.alert('✅ Sesi latihan berhasil! Semua pemain mendapat pengalaman.');
+  };
+  return (
+    <div className="space-y-3">
+      <div className="panel p-4 flex justify-between items-center">
+        <div>
+          <div className="font-bold text-gold">🏗️ Fasilitas Latihan</div>
+          <div className="text-xs text-gray-400">Level {state.club.facilities} / 5</div>
+        </div>
+        <button onClick={upgradeFacility} className="bg-yellow-500 text-black px-3 py-1 rounded text-sm font-bold">Upgrade (€{fmtMoney(facCost())})</button>
+      </div>
+      <div className="panel p-4 flex justify-between items-center">
+        <div>
+          <div className="font-bold text-gold">🎓 Akademi Muda</div>
+          <div className="text-xs text-gray-400">Level {state.club.academy} / 5</div>
+        </div>
+        <button onClick={upgradeAcademy} className="bg-yellow-500 text-black px-3 py-1 rounded text-sm font-bold">Upgrade (€{fmtMoney(acaCost())})</button>
+      </div>
+      <div className="panel p-4 flex justify-between items-center">
+        <div>
+          <div className="font-bold text-gold">🏋️ Sesi Latihan Intensif</div>
+          <div className="text-xs text-gray-400">Tingkatkan performa</div>
+        </div>
+        <button onClick={trainSquad} className="bg-green-600 px-3 py-1 rounded text-sm font-bold">Latih (€200 rb)</button>
+      </div>
+    </div>
+  );
+}
+
+function DatabaseView() {
+  const [query, setQuery] = useState('');
+  const [leagueFilter, setLeagueFilter] = useState('');
+  const results = useMemo(() => {
+    return allPlayers
+      .filter((p) => !query || p.name.toLowerCase().includes(query.toLowerCase()))
+      .filter((p) => {
+        if (!leagueFilter) return true;
+        const club = getClubById(p.clubId);
+        return club?.leagueId === leagueFilter;
+      })
+      .sort((a, b) => b.ovr - a.ovr)
+      .slice(0, 100);
+  }, [query, leagueFilter]);
+  return (
+    <div className="space-y-3">
+      <div className="panel p-3">
+        <input placeholder="🔍 Cari nama pemain asli..." value={query} onChange={(e) => setQuery(e.target.value)}
+          className="w-full px-3 py-2 mb-2 bg-zinc-900 border border-zinc-700 rounded" />
+        <select value={leagueFilter} onChange={(e) => setLeagueFilter(e.target.value)} className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded">
+          <option value="">Semua Liga</option>
+          {leagues.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+        </select>
+      </div>
+      <div className="text-xs text-gray-500 text-center">{results.length} pemain ditemukan</div>
+      <div className="space-y-1">
+        {results.map((p) => {
+          const club = getClubById(p.clubId);
+          return (
+            <div key={p.id} className="panel p-2 flex justify-between items-center text-sm">
+              <div>
+                <div className="font-bold">{p.name}</div>
+                <div className="text-xs text-gray-400">{p.position} · {club?.name || p.country}</div>
+              </div>
+              <div className="text-right">
+                <div className="gold-text font-bold">{p.ovr}</div>
+                <div className="text-xs text-gray-500">€{fmtMoney(p.marketValue * 1000000)}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function CareerView({ state, setState }) {
+  const currentStage = getCareerStage(state.manager.reputation);
+  const currentIdx = CAREER_STAGES.findIndex((s) => s.id === currentStage.id);
+  const nextStage = CAREER_STAGES[currentIdx + 1];
+  return (
+    <div className="space-y-3">
+      <div className="panel p-4">
+        <div className="text-sm text-gray-400">Jabatan Saat Ini</div>
+        <div className="text-2xl font-bold gold-text">{currentStage.name}</div>
+        <div className="text-xs text-gray-500 mt-1">Gaji: €{fmtMoney(currentStage.salary)}/minggu</div>
+        <div className="text-sm text-green-400 mt-2">Reputasi: {state.manager.reputation} / 100</div>
+        <div className="w-full bg-zinc-800 rounded h-2 mt-1 overflow-hidden">
+          <div className="bg-green-500 h-full" style={{ width: `${state.manager.reputation}%` }} />
+        </div>
+      </div>
+      {nextStage && (
+        <div className="panel p-4">
+          <div className="text-sm text-gray-400">Jabatan Berikutnya</div>
+          <div className="text-lg font-bold text-yellow-400">{nextStage.name}</div>
+          <div className="text-xs text-gray-500">Butuh reputasi {nextStage.minRep} untuk promosi</div>
+        </div>
+      )}
+      <div className="panel p-4">
+        <h3 className="text-sm font-bold text-gray-400 mb-2">Jalur Karier</h3>
+        {CAREER_STAGES.map((s, i) => (
+          <div key={s.id} className={`flex items-center gap-2 py-1 ${i <= currentIdx ? 'text-green-400' : 'text-gray-500'}`}>
+            <span>{i <= currentIdx ? '✅' : '⬜'}</span>
+            <span className="text-sm">{s.name}</span>
+            <span className="text-xs ml-auto">Rep {s.minRep}+</span>
+          </div>
+        ))}
+      </div>
+      {state.manager.reputation >= 94 && (
+        <div className="panel p-4 bg-gradient-to-r from-yellow-900/40 to-transparent">
+          <h3 className="text-lg font-bold gold-text mb-2">👑 LEVEL OWNER TERCAPAI</h3>
+          <p className="text-sm text-gray-300">Sebagai Owner, kamu bisa membeli klub lain.</p>
+          <button onClick={() => window.alert('Fitur akuisisi klub akan tersedia di update berikutnya!')}
+            className="mt-2 bg-yellow-500 text-black px-3 py-1 rounded text-sm font-bold">🏟️ Beli Klub Lain</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MatchOverlay({ log, playing, state, onClose }) {
+  const club = getClubById(state.club.id);
+  return (
+    <div className="max-w-3xl mx-auto">
+      <div className="panel p-4 text-center mb-3">
+        <div className="text-lg font-bold gold-text">{club.name}</div>
+        <div className="text-xs text-gray-400 mt-1">{playing ? '⏳ PERTANDINGAN BERLANGSUNG' : '✅ PERTANDINGAN SELESAI'}</div>
+      </div>
+      <div className="panel p-3 min-h-[300px] max-h-[60vh] overflow-y-auto space-y-1">
+        {log.map((ev, i) => (
+          <div key={i} className={`text-sm p-2 rounded ${
+            ev.type === 'goal' ? 'bg-green-900/50 text-green-300 font-bold' :
+            ev.type === 'goal-opp' ? 'bg-red-900/50 text-red-300 font-bold' :
+            ev.type === 'final' ? 'bg-yellow-900/40 text-yellow-300 font-bold text-center' :
+            ev.type === 'chance' ? 'text-yellow-200/80' :
+            'text-gray-300'
+          }`}>
+            {ev.minute > 0 && <span className="text-gray-500 font-mono mr-2">[{ev.minute}']</span>}
+            {ev.text}
+          </div>
+        ))}
+      </div>
+      {!playing && log.length > 0 && (
+        <button onClick={onClose} className="w-full mt-3 py-3 bg-yellow-500 text-black font-bold rounded hover:bg-yellow-400">
+          KEMBALI KE DASHBOARD
+        </button>
+      )}
+    </div>
+  );
+}
+
+// Mount
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
